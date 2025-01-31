@@ -43,7 +43,7 @@
             color: #333;
         }
         button {
-            margin-top: 20px;
+            margin-top: 10px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -51,6 +51,7 @@
             background-color: #007BFF;
             color: white;
             border-radius: 5px;
+            margin-right: 5px;
         }
         button:hover {
             background-color: #0056b3;
@@ -64,6 +65,7 @@
     <div class="grid" id="grid"></div>
     <p class="message" id="message"></p>
     <button onclick="resetGame()">Reset Game</button>
+    <button onclick="shuffleGrid()">Shuffle</button>
 
     <script>
         const words = [
@@ -91,7 +93,6 @@
         }
 
         function createGrid() {
-            shuffle(words);
             grid.innerHTML = "";
             words.forEach(word => {
                 const div = document.createElement("div");
@@ -142,8 +143,15 @@
             createGrid();
         }
 
-        createGrid();
+        function shuffleGrid() {
+            shuffle(words);
+            createGrid();
+        }
+
+        shuffleGrid();  // Shuffle words on first load
+
     </script>
 
 </body>
 </html>
+
