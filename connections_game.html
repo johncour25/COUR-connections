@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Connections Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .word {
+            padding: 15px;
+            background-color: white;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .word.selected {
+            background-color: #ffeb3b;
+        }
+        .correct {
+            background-color: #4CAF50 !important;
+            color: white;
+            pointer-events: none;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Custom Connections Game</h1>
+    <p>Select four related words!</p>
+    <div class="grid" id="grid"></div>
+    <p class="message" id="message"></p>
+    <button onclick="resetGame()">Reset Game</button>
+
+    <script>
+        const words = [
+            "Council", "Conference", "Degree Mafia", "381 E. Evelyn",
+            "Princeton", "Stanford", "Michigan", "Penn",
+            "ASU", "UofL", "Boulder", "Virtual",
+            "Mastertracks", "S12Ns", "C4P", "Guided Projects"
+        ];
+
+        const groups = [
+            ["Council", "Conference", "Degree Mafia", "381 E. Evelyn"],
+            ["Princeton", "Stanford", "Michigan", "Penn"],
+            ["ASU", "UofL", "Boulder", "Virtual"],
+            ["Mastertracks", "S12Ns", "C4P", "Guided Projects"]
+        ];
+
+        let selected = [];
+        const grid = document.getElementById("grid");
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function createGrid() {
+            shuffle(words);
+            grid.innerHTML = "";
+            words.forEach(word => {
+                const div = document.createElement("div");
+                div.classList.add("word");
+                div.textContent = word;
+                div.onclick = () => selectWord(div, word);
+                grid.appendChild(div);
+            });
+        }
+
+        function selectWord(element, word) {
+            if (element.classList.contains("correct")) return;
+            if (selected.includes(word)) {
+                selected = selected.filter(w => w !== word);
+                element.classList.remove("selected");
+            } else {
+                if (selected.length < 4) {
+                    selected.push(word);
+                    element.classList.add("selected");
+                    if (selected.length === 4) checkSelection();
+                }
+            }
+        }
+
+        function checkSelection() {
+            for (const group of groups) {
+                if (group.every(word => selected.includes(word))) {
+                    document.querySelectorAll(".selected").forEach(el => {
+                        el.classList.remove("selected");
+                        el.classList.add("correct");
+                    });
+                    selected = [];
+                    document.getElementById("message").textContent = "Correct! Keep going!";
+                    return;
+                }
+            }
+            document.getElementById("message").textContent = "Try again!";
+            setTimeout(() => {
+                document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+                selected = [];
+                document.getElementById("message").textContent = "";
+            }, 1000);
+        }
+
+        function resetGame() {
+            selected = [];
+            document.getElementById("message").textContent = "";
+            createGrid();
+        }
+
+        createGrid();
+    </script>
+
+</body>
+</html>
